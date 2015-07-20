@@ -38,7 +38,7 @@ public class SnitcoinActivity extends ActionBarActivity {
         Log.d("Current Receive Address", kit.wallet().currentReceiveAddress().toString());
         ((TextView) findViewById(R.id.address)).setText(kit.wallet().currentReceiveAddress().toString());
         ((TextView) findViewById(R.id.balance)).setText(format(kit.wallet().getBalance()));
-        ((Button) findViewById(R.id.button_send)).setOnClickListener(new SendActionListener().invoke());
+        ((Button) findViewById(R.id.button_send)).setOnClickListener(new SendActionListener());
     }
 
     public String format(Monetary monetary){
@@ -93,10 +93,8 @@ public class SnitcoinActivity extends ActionBarActivity {
 
             try {
                 Wallet.SendResult result = kit.send(value, address);
-
             } catch (AddressFormatException e) {
                 e.printStackTrace();
-
             } catch (InsufficientMoneyException e) {
                 Toast.makeText(getApplicationContext(), "Not enough coins in your wallet. Missing " + e.missing.getValue() + " satoshis are missing (including fees)", Toast.LENGTH_LONG).show();
                 ListenableFuture<Coin> balanceFuture = kit.wallet().getBalanceFuture(value, Wallet.BalanceType.AVAILABLE);

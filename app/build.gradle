@@ -25,4 +25,6 @@ dependencies {
     compile 'org.bitcoinj:bitcoinj-core:0.13.1'
     compile 'com.lambdaworks:scrypt:1.4.0'
     compile 'com.google.guava:guava:18.0'
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'org.slf4j:slf4j-simple:1.7.12'
 }
