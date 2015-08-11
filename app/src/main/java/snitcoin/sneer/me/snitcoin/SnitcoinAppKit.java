@@ -23,7 +23,7 @@ public class SnitcoinAppKit{
         this.context = context;
         this.params = params;
 
-        kit = new WalletAppKit(params, context.getFilesDir(), "snitcoin-wallet");
+        kit = new WalletAppKit(params, context.getFilesDir(), "snitcoin-wallet-2");
         kit.setAutoSave(true);
         kit.startAsync();
         kit.awaitRunning();
