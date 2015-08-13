@@ -37,7 +37,8 @@ public class SnitcoinActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snitcoin);
-        Snitcoin snitcoin = new Snitcoin();
+
+        Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());
         snitcoin.setListener(new Listener() {
             public void onChange(Status status) {
 
