@@ -79,6 +79,8 @@ public class SnitcoinActivity extends ActionBarActivity {
                     e.printStackTrace();
                 } catch (InsufficientMoneyException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
             }

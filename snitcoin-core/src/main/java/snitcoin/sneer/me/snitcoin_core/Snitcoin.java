@@ -45,7 +45,11 @@ public class Snitcoin implements Runnable {
 	}
 
 	public void send(String amount, String address)
-			throws AddressFormatException, InsufficientMoneyException, DustySendRequested {
+			throws AddressFormatException, InsufficientMoneyException, DustySendRequested, Exception {
+
+		if(kit.wallet().currentReceiveAddress().toString().equals(address))
+			throw new Exception("Invalid Address");
+
 		Address to = new Address(params, address);
 		Coin value = Coin.parseCoin(amount);
 		kit.wallet().sendCoins(kit.peerGroup(), to, value);
