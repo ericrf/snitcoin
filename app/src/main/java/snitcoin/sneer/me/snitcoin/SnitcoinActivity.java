@@ -1,27 +1,13 @@
 package snitcoin.sneer.me.snitcoin;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.bitcoinj.core.AbstractWalletEventListener;
-import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.InsufficientMoneyException;
-import org.bitcoinj.core.Monetary;
-import org.bitcoinj.core.Wallet;
-import org.bitcoinj.params.TestNet3Params;
-import org.bitcoinj.utils.MonetaryFormat;
 
 import snitcoin.sneer.me.snitcoin_core.Listener;
 import snitcoin.sneer.me.snitcoin_core.Snitcoin;
@@ -57,5 +43,32 @@ public class SnitcoinActivity extends ActionBarActivity {
         });
         snitcoin.run();
         //((Button) findViewById(R.id.button_send)).setOnClickListener(new SendActionListener());
+    }
+
+    private class TransactionArrayAdapter extends ArrayAdapter<Transaction>{
+
+        private final Context context;
+        private final Transaction[] transactions;
+
+        public TransactionArrayAdapter(Context context, Transaction[] transactions) {
+            super(context, -1, transactions);
+            this.context = context;
+            this.transactions = transactions;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.list_view_transaction, parent, false);
+
+            ((TextView) view.findViewById(R.id.text_transaction_progress)).setText(transactions[position].progress);
+            ((TextView) view.findViewById(R.id.text_transaction_amount)).setText(transactions[position].amount);
+            ((TextView) view.findViewById(R.id.text_transaction_hash)).setText(transactions[position].hash);
+
+
+            //TODO: create listener to open transaction detail's intent sending current transaction as param
+
+            return view;
+        }
     }
 }
