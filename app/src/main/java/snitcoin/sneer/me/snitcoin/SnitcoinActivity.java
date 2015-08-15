@@ -27,26 +27,30 @@ public class SnitcoinActivity extends ActionBarActivity {
 
         Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());
         snitcoin.setListener(new Listener() {
-            public void onChange(Status status) {
+            public void onChange(final Status status) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("--------------------------------------------");
+                        System.out.println("Message: " + status.message);
+                        System.out.println("Receive Address: " + status.receiveAddress);
 
-                System.out.println("--------------------------------------------");
-                System.out.println("Message: " + status.message);
-                System.out.println("Receive Address: " + status.receiveAddress);
+                        ((TextView) findViewById(R.id.balance)).setText(status.balance);
+                        ((TextView) findViewById(R.id.address)).setText(status.receiveAddress);
 
-                ((TextView) findViewById(R.id.balance)).setText(status.balance);
-                ((TextView) findViewById(R.id.address)).setText(status.receiveAddress);
+                        TransactionArrayAdapter adapter = new TransactionArrayAdapter(getApplicationContext(),
+                                status.transactions.toArray(new Transaction[status.transactions.size()]));
 
-                TransactionArrayAdapter adapter = new TransactionArrayAdapter(getApplicationContext(),
-                        status.transactions.toArray(new Transaction[status.transactions.size()]));
+                        ((ListView) findViewById(R.id.list_transactions)).setAdapter(adapter);
 
-                ((ListView) findViewById(R.id.list_transactions)).setAdapter(adapter);
-
-                System.out.println("Transactions: ");
-                for (Transaction transaction : status.transactions) {
-                    ((TextView) findViewById(R.id.balance)).setText(transaction.amount);
-                    System.out.println("\tTransaction hash: " + transaction.hash);
-                    System.out.println("\tProgress: " + transaction.progress);
-                }
+                        System.out.println("Transactions: ");
+                        for (Transaction transaction : status.transactions) {
+                            ((TextView) findViewById(R.id.balance)).setText(transaction.amount);
+                            System.out.println("\tTransaction hash: " + transaction.hash);
+                            System.out.println("\tProgress: " + transaction.progress);
+                        }
+                    }
+                });
             }
         });
 
