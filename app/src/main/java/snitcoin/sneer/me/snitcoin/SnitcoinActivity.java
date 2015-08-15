@@ -34,6 +34,22 @@ public class SnitcoinActivity extends ActionBarActivity {
                         System.out.println("--------------------------------------------");
                         System.out.println("Message: " + status.message);
                         System.out.println("Receive Address: " + status.receiveAddress);
+                        System.out.println("Transactions:");
+                        for(Transaction t : status.transactions){
+                            System.out.println("hash:" + t.hash);
+                            System.out.println("amount: " + t.amount);
+                            System.out.println("progress: " + t.progress);
+
+                            System.out.println("inputs: ");
+                            for(String input : t.inputs){
+                                System.out.println("address: " + input);
+                            }
+
+                            System.out.println("outputs: ");
+                            for(String output: t.outputs){
+                                System.out.println("address: " + output);
+                            }
+                        }
 
                         ((TextView) findViewById(R.id.balance)).setText(status.balance);
                         ((TextView) findViewById(R.id.address)).setText(status.receiveAddress);
@@ -42,13 +58,6 @@ public class SnitcoinActivity extends ActionBarActivity {
                                 status.transactions.toArray(new Transaction[status.transactions.size()]));
 
                         ((ListView) findViewById(R.id.list_transactions)).setAdapter(adapter);
-
-                        System.out.println("Transactions: ");
-                        for (Transaction transaction : status.transactions) {
-                            ((TextView) findViewById(R.id.balance)).setText(transaction.amount);
-                            System.out.println("\tTransaction hash: " + transaction.hash);
-                            System.out.println("\tProgress: " + transaction.progress);
-                        }
                     }
                 });
             }
