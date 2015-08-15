@@ -7,8 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.InsufficientMoneyException;
 
 import snitcoin.sneer.me.snitcoin_core.Listener;
 import snitcoin.sneer.me.snitcoin_core.Snitcoin;
@@ -25,7 +29,7 @@ public class SnitcoinActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snitcoin);
 
-        Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());
+        final Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());
         snitcoin.setListener(new Listener() {
             public void onChange(final Status status) {
                 runOnUiThread(new Runnable() {
@@ -64,7 +68,21 @@ public class SnitcoinActivity extends ActionBarActivity {
         });
 
         runOnUiThread(snitcoin);
-        //((Button) findViewById(R.id.button_send)).setOnClickListener(new SendActionListener());
+        ((Button) findViewById(R.id.button_send)).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                String amount = ((TextView) findViewById(R.id.edit_text_amount)).getText().toString();
+                String address = ((TextView) findViewById(R.id.edit_text_address)).getText().toString();
+                try {
+                    snitcoin.send(amount,address);
+                } catch (AddressFormatException e) {
+                    e.printStackTrace();
+                } catch (InsufficientMoneyException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private class TransactionArrayAdapter extends ArrayAdapter<Transaction>{
