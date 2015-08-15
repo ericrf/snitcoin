@@ -4,6 +4,7 @@ import org.bitcoinj.core.AbstractWalletEventListener;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Peer;
@@ -47,8 +48,9 @@ public class Snitcoin implements Runnable {
 	public void send(String amount, String address)
 			throws AddressFormatException, InsufficientMoneyException, DustySendRequested, Exception {
 
-		if(kit.wallet().currentReceiveAddress().toString().equals(address))
-			throw new Exception("Invalid Address");
+		for(ECKey k : kit.wallet().getIssuedReceiveKeys())
+			if(k.toAddress(kit.params()).toString().equals(address))
+				throw new Exception("Invalid Address");
 
 		Address to = new Address(params, address);
 		Coin value = Coin.parseCoin(amount);
@@ -62,7 +64,7 @@ public class Snitcoin implements Runnable {
         kit.awaitRunning();
         kit.peerGroup().setDownloadTxDependencies(true);
         kit.wallet().addEventListener(new WalletEventListenerImpl());
-        
+
         Set<Transaction> ts = kit.wallet().getTransactions(true);
         for (Transaction t : ts) {
 
