@@ -97,7 +97,11 @@ public class Snitcoin implements Runnable {
 		List<TransactionOutput> transactionOutputs = tx.getOutputs();
 		String outputs[] = new String[transactionOutputs.size()];
 		for(int i = 0; i < transactionOutputs.size() ; i++){
-			outputs[i] = transactionOutputs.get(i).getAddressFromP2SH(kit.params()).toString();
+			TransactionOutput output = transactionOutputs.get(i);
+			NetworkParameters params = kit.params();
+			Address addressFromP2SH = output.getAddressFromP2SH(params);
+			Address addressFromP2PKHScript = output.getAddressFromP2PKHScript(params);
+			outputs[i] = addressFromP2PKHScript.toString();
 		}
 		return outputs;
 	}

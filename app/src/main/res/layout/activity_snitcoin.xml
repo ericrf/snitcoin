@@ -65,5 +65,11 @@
         android:id="@+id/button_send"
         android:layout_gravity="center_horizontal" />
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_transactions"
+        android:layout_gravity="center_horizontal" />
+
 
 </LinearLayout>

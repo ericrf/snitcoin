@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import snitcoin.sneer.me.snitcoin_core.Listener;
@@ -30,8 +31,15 @@ public class SnitcoinActivity extends ActionBarActivity {
 
                 System.out.println("--------------------------------------------");
                 System.out.println("Message: " + status.message);
+                System.out.println("Receive Address: " + status.receiveAddress);
+
                 ((TextView) findViewById(R.id.balance)).setText(status.balance);
                 ((TextView) findViewById(R.id.address)).setText(status.receiveAddress);
+
+                TransactionArrayAdapter adapter = new TransactionArrayAdapter(getApplicationContext(),
+                        status.transactions.toArray(new Transaction[status.transactions.size()]));
+
+                ((ListView) findViewById(R.id.list_transactions)).setAdapter(adapter);
 
                 System.out.println("Transactions: ");
                 for (Transaction transaction : status.transactions) {
@@ -41,7 +49,8 @@ public class SnitcoinActivity extends ActionBarActivity {
                 }
             }
         });
-        snitcoin.run();
+
+        runOnUiThread(snitcoin);
         //((Button) findViewById(R.id.button_send)).setOnClickListener(new SendActionListener());
     }
 
@@ -64,7 +73,6 @@ public class SnitcoinActivity extends ActionBarActivity {
             ((TextView) view.findViewById(R.id.text_transaction_progress)).setText(transactions[position].progress);
             ((TextView) view.findViewById(R.id.text_transaction_amount)).setText(transactions[position].amount);
             ((TextView) view.findViewById(R.id.text_transaction_hash)).setText(transactions[position].hash);
-
 
             //TODO: create listener to open transaction detail's intent sending current transaction as param
 
