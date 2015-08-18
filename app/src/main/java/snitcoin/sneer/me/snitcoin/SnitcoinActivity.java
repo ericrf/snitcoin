@@ -38,22 +38,6 @@ public class SnitcoinActivity extends ActionBarActivity {
                         System.out.println("--------------------------------------------");
                         System.out.println("Message: " + status.message);
                         System.out.println("Receive Address: " + status.receiveAddress);
-                        System.out.println("Transactions:");
-                        for(Transaction t : status.transactions){
-                            System.out.println("hash:" + t.hash);
-                            System.out.println("amount: " + t.amount);
-                            System.out.println("progress: " + t.progress);
-
-                            System.out.println("inputs: ");
-                            for(String input : t.inputs){
-                                System.out.println("address: " + input);
-                            }
-
-                            System.out.println("outputs: ");
-                            for(String output: t.outputs){
-                                System.out.println("address: " + output);
-                            }
-                        }
 
                         ((TextView) findViewById(R.id.balance)).setText(status.balance);
                         ((TextView) findViewById(R.id.address)).setText(status.receiveAddress);
@@ -107,7 +91,15 @@ public class SnitcoinActivity extends ActionBarActivity {
             ((TextView) view.findViewById(R.id.text_transaction_amount)).setText(transactions[position].amount);
             ((TextView) view.findViewById(R.id.text_transaction_hash)).setText(transactions[position].hash);
 
-            //TODO: create listener to open transaction detail's intent sending current transaction as param
+            if(transactions[position].inputs.length > 1)
+                ((TextView) view.findViewById(R.id.text_transaction_input_address)).setText("multiple");
+            else
+                ((TextView) view.findViewById(R.id.text_transaction_input_address)).setText(transactions[position].inputs[0]);
+
+            if(transactions[position].outputs.length > 1)
+                ((TextView) view.findViewById(R.id.text_transaction_output_address)).setText("multiple");
+            else
+                ((TextView) view.findViewById(R.id.text_transaction_output_address)).setText(transactions[position].outputs[0]);
 
             return view;
         }
