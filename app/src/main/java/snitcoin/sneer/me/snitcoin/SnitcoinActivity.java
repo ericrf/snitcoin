@@ -52,13 +52,13 @@ public class SnitcoinActivity extends ActionBarActivity {
         });
 
         runOnUiThread(snitcoin);
-        ((Button) findViewById(R.id.button_send)).setOnClickListener(new View.OnClickListener(){
+        ((Button) findViewById(R.id.button_send)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String amount = ((TextView) findViewById(R.id.edit_text_amount)).getText().toString();
                 String address = ((TextView) findViewById(R.id.edit_text_address)).getText().toString();
                 try {
-                    snitcoin.send(amount,address);
+                    snitcoin.send(amount, address);
                 } catch (AddressFormatException e) {
                     e.printStackTrace();
                 } catch (InsufficientMoneyException e) {
@@ -67,6 +67,24 @@ public class SnitcoinActivity extends ActionBarActivity {
                     e.printStackTrace();
                 }
 
+            }
+        });
+
+        ((Button) findViewById(R.id.button_fresh_receive_address)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String freshReceiveAddres = snitcoin.freshReceiveAddress();
+                System.out.println(freshReceiveAddres);
+            }
+        });
+
+
+
+        ((Button) findViewById(R.id.button_current_receive_address)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentReceiveAddres = snitcoin.currentReceiveAddress();
+                System.out.println(currentReceiveAddres);
             }
         });
     }
@@ -89,6 +107,7 @@ public class SnitcoinActivity extends ActionBarActivity {
 
             ((TextView) view.findViewById(R.id.text_transaction_progress)).setText(transactions[position].progress);
             ((TextView) view.findViewById(R.id.text_transaction_amount)).setText(transactions[position].amount);
+            ((TextView) view.findViewById(R.id.text_transaction_fee)).setText(transactions[position].fee);
             ((TextView) view.findViewById(R.id.text_transaction_hash)).setText(transactions[position].hash);
 
             if(transactions[position].inputs.length > 1)

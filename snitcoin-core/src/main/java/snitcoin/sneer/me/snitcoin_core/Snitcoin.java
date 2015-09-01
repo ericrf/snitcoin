@@ -75,9 +75,15 @@ public class Snitcoin implements Runnable {
         	int numSeenPeers = t.getConfidence().numBroadcastPeers() + t.getConfidence().numBroadcastPeers() / 1;
 
         	final double progress = Math.min(1.0, mined ? 1.0 : numSeenPeers / (double) numWaitingFor);
-        	transactions.add(new snitcoin.sneer.me.snitcoin_core.Transaction(t.getHashAsString(), t.getValue(kit.wallet()).toPlainString(), "" + progress, getInputs(t), getOutputs(t)));
+        	transactions.add(new snitcoin.sneer.me.snitcoin_core.Transaction(t.getHashAsString(), t.getValue(kit.wallet()).toPlainString(), "" + progress, getFee(t), getInputs(t), getOutputs(t)));
 		}
 		notify2(kit.wallet(), "Started! ");
+	}
+
+
+
+	private String getFee(Transaction t) {
+		return t.getFee() == null ? "0.00" : t.getFee().toPlainString();
 	}
 
 	public void setListener(Listener listener) {
@@ -111,12 +117,21 @@ public class Snitcoin implements Runnable {
 		}
 		return outputs;
 	}
+
+	public String freshReceiveAddress() {
+		return kit.wallet().freshReceiveAddress().toString();
+	}
+
+	public String currentReceiveAddress() {
+		return kit.wallet().currentReceiveAddress().toString();
+	}
+
 	private class WalletEventListenerImpl extends AbstractWalletEventListener implements WalletEventListener {
 
 		private void addTransaction(Transaction tx) {
 			String hash = tx.getHashAsString();
 			String amount = tx.getValue(kit.wallet()).toPlainString();
-			transactions.add(new snitcoin.sneer.me.snitcoin_core.Transaction(hash, amount, "0.0", getInputs(tx), getOutputs(tx)));
+			transactions.add(new snitcoin.sneer.me.snitcoin_core.Transaction(hash, amount, "0.0", getFee(tx), getInputs(tx), getOutputs(tx)));
 		}
 
 		private void setBroadcastProgressCallback(final Transaction tx, TransactionBroadcast broadcast) {
@@ -127,7 +142,7 @@ public class Snitcoin implements Runnable {
 						if (t.hash.equals(tx.getHashAsString())) {
 							transactions.set(i,
 								new snitcoin.sneer.me.snitcoin_core.Transaction(
-										t.hash, t.amount, String.valueOf(progress),
+										t.hash, t.amount, String.valueOf(progress), getFee(tx),
 										getInputs(tx), getOutputs(tx)));
 							notify2(kit.wallet(), "Transaction Progress: " + tx.getHashAsString());
 						}

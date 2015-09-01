@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Progress"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <TextView
         android:id="@+id/text_transaction_progress"
         android:layout_width="wrap_content"
@@ -12,10 +19,35 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
         android:id="@+id/text_transaction_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transaction Amount"
+        android:text="Amount"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fee"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TextView
+        android:id="@+id/text_transaction_fee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fee"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Transaction Hash"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -26,16 +58,29 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inputs"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
         android:id="@+id/text_transaction_input_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transaction Hash"
+        android:text="Inputs"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Outputs"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/text_transaction_output_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transaction Hash"
+        android:text="Outputs"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
 </LinearLayout>
