@@ -11,9 +11,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.apache.log4j.Level;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.InsufficientMoneyException;
 
+import de.mindpipe.android.logging.log4j.LogConfigurator;
 import snitcoin.sneer.me.snitcoin_core.Listener;
 import snitcoin.sneer.me.snitcoin_core.Snitcoin;
 import snitcoin.sneer.me.snitcoin_core.Status;
@@ -27,6 +29,16 @@ public class SnitcoinActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        LogConfigurator logConfigurator = new LogConfigurator();
+        logConfigurator.setRootLevel(Level.ALL);
+        logConfigurator.setLevel("org.bitcoinj", Level.ALL);
+        logConfigurator.setUseFileAppender(false);
+        logConfigurator.setUseLogCatAppender(true);
+        logConfigurator.setLogCatPattern("%d %-5p [%c{2}]-[%L] %m%n");
+        logConfigurator.configure();
+
+
         setContentView(R.layout.activity_snitcoin);
 
         final Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());

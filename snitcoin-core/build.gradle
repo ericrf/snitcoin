@@ -25,5 +25,6 @@ dependencies {
     compile 'com.lambdaworks:scrypt:1.4.0'
     compile 'com.google.guava:guava:18.0'
     compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'org.slf4j:slf4j-simple:1.7.12'
+    compile 'org.slf4j:slf4j-log4j12:1.7.12'
+    compile 'de.mindpipe.android:android-logging-log4j:1.0.3'
 }
