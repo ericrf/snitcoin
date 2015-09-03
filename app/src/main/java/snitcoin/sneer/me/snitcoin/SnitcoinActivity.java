@@ -34,9 +34,9 @@ public class SnitcoinActivity extends ActionBarActivity {
         @Override
         protected void append(LoggingEvent event) {
             StringBuilder builder = new StringBuilder(event.getLevel().toString())
-                    .append(" - ").append(event.getMessage())
                     .append(" - ").append(event.categoryName)
-                    .append(" - ").append(event.getRenderedMessage());
+                    .append(" - ").append(event.getMessage())
+                    ;
 
             System.out.println(builder.toString());
         }
@@ -70,7 +70,7 @@ public class SnitcoinActivity extends ActionBarActivity {
             }
         });
 
-        runOnUiThread(snitcoin);
+        new Thread(snitcoin).start();
         ((Button) findViewById(R.id.button_send)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
