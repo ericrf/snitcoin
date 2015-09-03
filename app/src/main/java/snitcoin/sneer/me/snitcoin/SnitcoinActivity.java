@@ -11,9 +11,21 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.AsyncAppender;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.spi.ErrorHandler;
+import org.apache.log4j.spi.Filter;
+import org.apache.log4j.spi.LoggingEvent;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.InsufficientMoneyException;
+
+
+import java.util.ArrayList;
 
 import de.mindpipe.android.logging.log4j.LogConfigurator;
 import snitcoin.sneer.me.snitcoin_core.Listener;
@@ -26,17 +38,34 @@ public class SnitcoinActivity extends ActionBarActivity {
 
     SnitcoinAppKit kit;
 
+
+    public class MyAppender extends MyAppenderSkeleton {
+
+        @Override
+        protected void append(LoggingEvent event) {
+            System.err.println("Logger Name: " + event.getLoggerName());
+            System.err.println("Thread: " + event.getThreadName());
+            System.err.println("Level: " + event.getLevel());
+            System.err.println("Location Information: " + event.getLocationInformation());
+            System.err.println("TimeStamp: " + event.getTimeStamp());
+            System.err.println("Message: " + event.getMessage());
+            System.err.println("----------------------------------");
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogConfigurator logConfigurator = new LogConfigurator();
-        logConfigurator.setRootLevel(Level.ALL);
-        logConfigurator.setLevel("org.bitcoinj", Level.ALL);
-        logConfigurator.setUseFileAppender(false);
-        logConfigurator.setUseLogCatAppender(true);
-        logConfigurator.setLogCatPattern("%d %-5p [%c{2}]-[%L] %m%n");
-        logConfigurator.configure();
+        Logger.getRootLogger().addAppender(new MyAppender());
+
+        //LogConfigurator logConfigurator = new LogConfigurator();
+        //logConfigurator.setRootLevel(Level.ALL);
+        //logConfigurator.setLevel("org.bitcoinj", Level.ALL);
+        //logConfigurator.setUseFileAppender(false);
+        //logConfigurator.setUseLogCatAppender(true);
+        //logConfigurator.setLogCatPattern("%d %-5p [%c{2}]-[%L] %m%n");
+        //logConfigurator.configure();
 
 
         setContentView(R.layout.activity_snitcoin);
@@ -133,6 +162,33 @@ public class SnitcoinActivity extends ActionBarActivity {
                 ((TextView) view.findViewById(R.id.text_transaction_output_address)).setText(transactions[position].outputs[0]);
 
             return view;
+        }
+    }
+
+    private abstract class MyAppenderSkeleton extends AppenderSkeleton{
+
+        @Override
+        public synchronized void doAppend(LoggingEvent event) {
+            if(closed) {
+                LogLog.error("Attempted to append to closed appender named [" + name + "].");
+                return;
+            }
+
+            if(!isAsSevereAsThreshold(event.getLevel())) {
+                return;
+            }
+
+            this.append(event);
+        }
+
+        @Override
+        public void close() {
+
+        }
+
+        @Override
+        public boolean requiresLayout() {
+            return false;
         }
     }
 }
