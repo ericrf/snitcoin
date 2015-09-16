@@ -1,5 +1,6 @@
 package snitcoin.sneer.me.snitcoin_core;
 
+import org.apache.log4j.Logger;
 import org.bitcoinj.core.AbstractWalletEventListener;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
@@ -58,6 +59,7 @@ public class Snitcoin implements Runnable {
 	}
 
 	public void run() {
+		Logger.getRootLogger().warn("Starting...");
 		kit = new WalletAppKit(params, filesDir, this.filePrefix);
 		kit.setAutoSave(true);
         kit.startAsync();
@@ -67,7 +69,6 @@ public class Snitcoin implements Runnable {
 
         Set<Transaction> ts = kit.wallet().getTransactions(true);
         for (Transaction t : ts) {
-
         	List<Peer> peers = kit.peerGroup().getConnectedPeers();
         	boolean mined = t.getAppearsInHashes() != null;
         	int numToBroadcastTo = (int) Math.max(1, Math.round(Math.ceil(peers.size() / 2.0)));
@@ -77,7 +78,7 @@ public class Snitcoin implements Runnable {
         	final double progress = Math.min(1.0, mined ? 1.0 : numSeenPeers / (double) numWaitingFor);
         	transactions.add(new snitcoin.sneer.me.snitcoin_core.Transaction(t.getHashAsString(), t.getValue(kit.wallet()).toPlainString(), "" + progress, getFee(t), getInputs(t), getOutputs(t)));
 		}
-		notify2(kit.wallet(), "Started! ");
+		Logger.getRootLogger().warn("Started!");
 	}
 
 

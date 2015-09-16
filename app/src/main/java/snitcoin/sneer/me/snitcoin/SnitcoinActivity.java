@@ -2,6 +2,7 @@ package snitcoin.sneer.me.snitcoin;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.log4j.AppenderSkeleton;
@@ -26,19 +28,46 @@ import snitcoin.sneer.me.snitcoin_core.Transaction;
 
 public class SnitcoinActivity extends ActionBarActivity {
 
-    SnitcoinAppKit kit;
-
+    private ProgressBar progressBar;
+    private int progressStatus = 0;
+    private TextView textView;
+    private Handler handler = new Handler();
 
     public class MyAppender extends MyAppenderSkeleton {
 
         @Override
         protected void append(LoggingEvent event) {
             StringBuilder builder = new StringBuilder(event.getLevel().toString())
-                    .append(" - ").append(event.categoryName)
-                    .append(" - ").append(event.getMessage())
-                    ;
+                .append(" - ").append(event.categoryName)
+                .append(" - ").append(event.getMessage())
+            ;
+//            Command command = CommandFactory.create(SnitcoinActivity.this, event);
+//            if(command != null) {
+//                Logger.getRootLogger().debug("executando" + command.getClass());
+//                command.execute();
+//            }
 
-            System.out.println(builder.toString());
+           System.out.println(builder.toString());
+        }
+    }
+    
+    public class ProgressAppender extends MyAppenderSkeleton{
+
+        @Override
+        protected void append(final LoggingEvent event) {
+            runOnUiThread(new Runnable() {
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+                public void run() {
+                    if(event.categoryName.toString().equals("root")){
+                        String message = event.getMessage().toString();
+                        if(message.equals("Starting..."))
+                            progressBar.setVisibility(View.VISIBLE);
+                        if(message.equals("Started!"))
+                            progressBar.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
+
         }
     }
 
@@ -46,10 +75,13 @@ public class SnitcoinActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snitcoin);
+        ((ProgressBar) findViewById(R.id.progress_bar)).setIndeterminate(true);
+
+
 
         Logger.getRootLogger().setLevel(Level.ALL);
+        Logger.getRootLogger().addAppender(new ProgressAppender());
         Logger.getRootLogger().addAppender(new MyAppender());
-
 
         final Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());
         snitcoin.setListener(new Listener() {
@@ -69,8 +101,10 @@ public class SnitcoinActivity extends ActionBarActivity {
                 });
             }
         });
-
         new Thread(snitcoin).start();
+
+
+
         ((Button) findViewById(R.id.button_send)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,13 +131,32 @@ public class SnitcoinActivity extends ActionBarActivity {
         });
 
 
-
         ((Button) findViewById(R.id.button_current_receive_address)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Logger.getRootLogger().debug("currentReceiveAddress()" + snitcoin.currentReceiveAddress());
             }
         });
+
+
+
+//        new Thread(new Runnable() {
+//            public void run() {
+//                while (progressStatus < 100) {
+//                    progressStatus += 1;
+//                    handler.post(new Runnable() {
+//                        public void run() {
+//                            progressBar.setProgress(progressStatus);
+//                        }
+//                    });
+//                    try {
+//                        Thread.sleep(200);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
     }
 
     private class TransactionArrayAdapter extends ArrayAdapter<Transaction>{
