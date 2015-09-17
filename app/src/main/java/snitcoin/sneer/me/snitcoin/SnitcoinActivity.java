@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,53 +34,14 @@ public class SnitcoinActivity extends ActionBarActivity {
     private TextView textView;
     private Handler handler = new Handler();
 
-    public class MyAppender extends MyAppenderSkeleton {
-
-        @Override
-        protected void append(LoggingEvent event) {
-            StringBuilder builder = new StringBuilder(event.getLevel().toString())
-                .append(" - ").append(event.categoryName)
-                .append(" - ").append(event.getMessage())
-            ;
-//            Command command = CommandFactory.create(SnitcoinActivity.this, event);
-//            if(command != null) {
-//                Logger.getRootLogger().debug("executando" + command.getClass());
-//                command.execute();
-//            }
-
-           System.out.println(builder.toString());
-        }
-    }
-    
-    public class ProgressAppender extends MyAppenderSkeleton{
-
-        @Override
-        protected void append(final LoggingEvent event) {
-            runOnUiThread(new Runnable() {
-                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-                public void run() {
-                    if(event.categoryName.toString().equals("root")){
-                        String message = event.getMessage().toString();
-                        if(message.equals("Starting..."))
-                            progressBar.setVisibility(View.VISIBLE);
-                        if(message.equals("Started!"))
-                            progressBar.setVisibility(View.INVISIBLE);
-                    }
-                }
-            });
-
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snitcoin);
         ((ProgressBar) findViewById(R.id.progress_bar)).setIndeterminate(true);
 
-
-
         Logger.getRootLogger().setLevel(Level.ALL);
+        Logger.getRootLogger().addAppender(new LoggerAppender());
         Logger.getRootLogger().addAppender(new ProgressAppender());
         Logger.getRootLogger().addAppender(new MyAppender());
 
@@ -102,8 +64,6 @@ public class SnitcoinActivity extends ActionBarActivity {
             }
         });
         new Thread(snitcoin).start();
-
-
 
         ((Button) findViewById(R.id.button_send)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,26 +97,6 @@ public class SnitcoinActivity extends ActionBarActivity {
                 Logger.getRootLogger().debug("currentReceiveAddress()" + snitcoin.currentReceiveAddress());
             }
         });
-
-
-
-//        new Thread(new Runnable() {
-//            public void run() {
-//                while (progressStatus < 100) {
-//                    progressStatus += 1;
-//                    handler.post(new Runnable() {
-//                        public void run() {
-//                            progressBar.setProgress(progressStatus);
-//                        }
-//                    });
-//                    try {
-//                        Thread.sleep(200);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }).start();
     }
 
     private class TransactionArrayAdapter extends ArrayAdapter<Transaction>{
@@ -194,6 +134,53 @@ public class SnitcoinActivity extends ActionBarActivity {
         }
     }
 
+    public class ProgressAppender extends MyAppenderSkeleton{
+
+        @Override
+        protected void append(final LoggingEvent event) {
+            runOnUiThread(new Runnable() {
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+                public void run() {
+                    if(event.categoryName.toString().equals("root")){
+                        String message = event.getMessage().toString();
+                        if(message.equals("Starting..."))
+                            progressBar.setVisibility(View.VISIBLE);
+                        if(message.equals("Started!"))
+                            progressBar.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
+
+        }
+    }
+
+    public class LoggerAppender extends MyAppenderSkeleton{
+
+        @Override
+        protected void append(final LoggingEvent event) {
+            runOnUiThread(new Runnable() {
+                TextView logger = (TextView) findViewById(R.id.logger);
+                public void run() {
+                    Level level = event.getLevel();
+                    String categoryName = event.categoryName.toString();
+
+                    if(level != Level.DEBUG
+                            && !categoryName.equals("org.bitcoinj.wallet.DeterministicKeyChain")
+                            && !categoryName.equals("org.bitcoinj.core.BitcoinSerializer")
+                            && !categoryName.equals("org.bitcoinj.core.Peer")
+                            && !categoryName.equals("org.bitcoinj.core.PeerGroup")
+                            && !categoryName.equals("root")
+                            && !categoryName.equals("org.bitcoinj.net.NioClientManager")
+                            && !categoryName.equals("org.bitcoinj.crypto.LinuxSecureRandom")
+                            && !categoryName.equals("org.bitcoinj.kits.WalletAppKit"))
+                        logger.setText(event.getMessage() +"\n" + logger.getText());
+                }
+            });
+
+        }
+    }
+
+
     private abstract class MyAppenderSkeleton extends AppenderSkeleton{
 
         @Override
@@ -207,4 +194,23 @@ public class SnitcoinActivity extends ActionBarActivity {
         @Override
         public boolean requiresLayout() { return false; }
     }
+
+    public class MyAppender extends MyAppenderSkeleton {
+
+        @Override
+        protected void append(LoggingEvent event) {
+            String categoryName = event.categoryName.toString();
+            StringBuilder builder = new StringBuilder(event.getLevel().toString())
+                    .append(" - ").append(categoryName)
+                    .append(" - ").append(event.getMessage())
+                    ;
+
+            if(!categoryName.equals("org.bitcoinj.core.BitcoinSerializer")
+                    && !categoryName.equals("org.bitcoinj.core.Peer")
+                    && !categoryName.equals("org.bitcoinj.wallet.DeterministicKeyChain"))
+                //org.bitcoinj.wallet.DeterministicKeyChain
+                System.out.println(builder.toString());
+        }
+    }
+
 }
