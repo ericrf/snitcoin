@@ -1,119 +1,125 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".SnitcoinActivity">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollView"
         android:layout_gravity="center_horizontal">
 
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
 
             <ProgressBar
+                android:id="@+id/progress_bar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="322dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/progress_bar"
                 android:layout_gravity="center_horizontal"
+                android:indeterminate="false"
                 android:max="100"
-                android:progress="1"
-                android:indeterminate="false" />
+                android:progress="1" />
 
             <Button
+                android:id="@+id/button_current_receive_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Current Receive Address"
-                android:id="@+id/button_current_receive_address" />
+                android:text="Current Receive Address" />
 
             <Button
+                android:id="@+id/button_fresh_receive_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fresh Receive Address"
-                android:id="@+id/button_fresh_receive_address" />
+                android:text="Fresh Receive Address" />
 
             <TextView
+                android:id="@+id/labelAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/address"
-                android:id="@+id/labelAddress" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
+                android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text=""
-                android:id="@+id/address" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
+                android:id="@+id/labelBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/balance"
-                android:id="@+id/labelBalance" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
+                android:id="@+id/balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="0"
-                android:id="@+id/balance" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/send_bitcoins" />
+                android:text="@string/send_bitcoins"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <EditText
+                android:id="@+id/edit_text_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/edit_text_address"
                 android:hint="Address" />
 
             <EditText
+                android:id="@+id/edit_text_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/edit_text_amount"
-                android:hint="Amount" />
+                android:hint="Amount"
+                android:inputType="numberDecimal" />
 
             <Button
+                android:id="@+id/button_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/send"
-                android:id="@+id/button_send"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:text="@string/send" />
 
             <ListView
+                android:id="@+id/list_transactions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/list_transactions"
                 android:layout_gravity="center_horizontal" />
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/logger" />
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/logger"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </HorizontalScrollView>
+
+
 
 
         </LinearLayout>
