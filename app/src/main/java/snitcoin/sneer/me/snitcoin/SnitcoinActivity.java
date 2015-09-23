@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,6 +19,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.InsufficientMoneyException;
+
+import java.util.Calendar;
 
 import snitcoin.sneer.me.snitcoin_core.Listener;
 import snitcoin.sneer.me.snitcoin_core.Snitcoin;
@@ -43,7 +44,7 @@ public class SnitcoinActivity extends ActionBarActivity {
         Logger.getRootLogger().setLevel(Level.ALL);
         Logger.getRootLogger().addAppender(new LoggerAppender());
         Logger.getRootLogger().addAppender(new ProgressAppender());
-        Logger.getRootLogger().addAppender(new MyAppender());
+        Logger.getRootLogger().addAppender(new MyConsoleAppender());
 
         final Snitcoin snitcoin = new Snitcoin(getApplication().getFilesDir());
         snitcoin.setListener(new Listener() {
@@ -150,7 +151,6 @@ public class SnitcoinActivity extends ActionBarActivity {
                     }
                 }
             });
-
         }
     }
 
@@ -165,37 +165,20 @@ public class SnitcoinActivity extends ActionBarActivity {
                     String categoryName = event.categoryName.toString();
 
                     if(level != Level.DEBUG
-                            && !categoryName.equals("org.bitcoinj.wallet.DeterministicKeyChain")
-                            && !categoryName.equals("org.bitcoinj.core.BitcoinSerializer")
-                            && !categoryName.equals("org.bitcoinj.core.Peer")
-                            && !categoryName.equals("org.bitcoinj.core.PeerGroup")
+                            && level != Level.ERROR
                             && !categoryName.equals("root")
-                            && !categoryName.equals("org.bitcoinj.net.NioClientManager")
-                            && !categoryName.equals("org.bitcoinj.crypto.LinuxSecureRandom")
-                            && !categoryName.equals("org.bitcoinj.kits.WalletAppKit"))
-                        logger.setText(event.getMessage() +"\n" + logger.getText());
+                            ) {
+                        String time = Calendar.getInstance().getTime().toString();
+                        logger.setText( time +" " +event.getLevel().toString() + " - " + event.getMessage() + " - " + event.categoryName +"\n" + logger.getText());
+                    }
                 }
             });
-
         }
     }
 
 
-    private abstract class MyAppenderSkeleton extends AppenderSkeleton{
 
-        @Override
-        public synchronized void doAppend(LoggingEvent event) {
-            this.append(event);
-        }
-
-        @Override
-        public void close() {}
-
-        @Override
-        public boolean requiresLayout() { return false; }
-    }
-
-    public class MyAppender extends MyAppenderSkeleton {
+    public class MyConsoleAppender extends MyAppenderSkeleton {
 
         @Override
         protected void append(LoggingEvent event) {
@@ -212,5 +195,21 @@ public class SnitcoinActivity extends ActionBarActivity {
                 System.out.println(builder.toString());
         }
     }
+
+    private abstract class MyAppenderSkeleton extends AppenderSkeleton{
+
+        @Override
+        public synchronized void doAppend(LoggingEvent event) {
+            this.append(event);
+        }
+
+        @Override
+        public void close() {}
+
+        @Override
+        public boolean requiresLayout() { return false; }
+    }
+
+
 
 }
