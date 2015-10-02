@@ -27,14 +27,7 @@ import snitcoin.sneer.me.snitcoin_core.Snitcoin;
 import snitcoin.sneer.me.snitcoin_core.Status;
 import snitcoin.sneer.me.snitcoin_core.Transaction;
 
-
 public class SnitcoinActivity extends ActionBarActivity {
-
-    private ProgressBar progressBar;
-    private int progressStatus = 0;
-    private TextView textView;
-    private Handler handler = new Handler();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +35,8 @@ public class SnitcoinActivity extends ActionBarActivity {
         ((ProgressBar) findViewById(R.id.progress_bar)).setIndeterminate(true);
 
         Logger.getRootLogger().setLevel(Level.ALL);
-        Logger.getRootLogger().addAppender(new LoggerAppender());
+
+//        Logger.getRootLogger().addAppender(new LoggerAppender());
         Logger.getRootLogger().addAppender(new ProgressAppender());
         Logger.getRootLogger().addAppender(new MyConsoleAppender());
 
@@ -54,7 +48,6 @@ public class SnitcoinActivity extends ActionBarActivity {
                     public void run() {
                         Logger.getRootLogger().warn(status.message + " : " + status.receiveAddress);
                         ((TextView) findViewById(R.id.balance)).setText(status.balance);
-                        ((TextView) findViewById(R.id.address)).setText(status.receiveAddress);
 
                         TransactionArrayAdapter adapter = new TransactionArrayAdapter(getApplicationContext(),
                                 status.transactions.toArray(new Transaction[status.transactions.size()]));
@@ -100,7 +93,7 @@ public class SnitcoinActivity extends ActionBarActivity {
         });
     }
 
-    private class TransactionArrayAdapter extends ArrayAdapter<Transaction>{
+    private class TransactionArrayAdapter extends ArrayAdapter<Transaction> {
 
         private final Context context;
         private final Transaction[] transactions;
@@ -121,12 +114,12 @@ public class SnitcoinActivity extends ActionBarActivity {
             ((TextView) view.findViewById(R.id.text_transaction_fee)).setText(transactions[position].fee);
             ((TextView) view.findViewById(R.id.text_transaction_hash)).setText(transactions[position].hash);
 
-            if(transactions[position].inputs.length > 1)
+            if (transactions[position].inputs.length > 1)
                 ((TextView) view.findViewById(R.id.text_transaction_input_address)).setText("multiple");
             else
                 ((TextView) view.findViewById(R.id.text_transaction_input_address)).setText(transactions[position].inputs[0]);
 
-            if(transactions[position].outputs.length > 1)
+            if (transactions[position].outputs.length > 1)
                 ((TextView) view.findViewById(R.id.text_transaction_output_address)).setText("multiple");
             else
                 ((TextView) view.findViewById(R.id.text_transaction_output_address)).setText(transactions[position].outputs[0]);
@@ -135,47 +128,45 @@ public class SnitcoinActivity extends ActionBarActivity {
         }
     }
 
-    public class ProgressAppender extends MyAppenderSkeleton{
+    public class ProgressAppender extends MyAppenderSkeleton {
 
         @Override
         protected void append(final LoggingEvent event) {
             runOnUiThread(new Runnable() {
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
                 public void run() {
-                    if(event.categoryName.toString().equals("root")){
-                        String message = event.getMessage().toString();
-                        if(message.equals("Starting..."))
-                            progressBar.setVisibility(View.VISIBLE);
-                        if(message.equals("Started!"))
-                            progressBar.setVisibility(View.INVISIBLE);
-                    }
+                    String message = event.getMessage().toString();
+                    if (message.equals(Snitcoin.STARTING))
+                        progressBar.setVisibility(View.VISIBLE);
+                    if (message.equals(Snitcoin.DONE))
+                        progressBar.setVisibility(View.INVISIBLE);
                 }
             });
         }
     }
 
-    public class LoggerAppender extends MyAppenderSkeleton{
+    public class LoggerAppender extends MyAppenderSkeleton {
 
         @Override
         protected void append(final LoggingEvent event) {
             runOnUiThread(new Runnable() {
                 TextView logger = (TextView) findViewById(R.id.logger);
+
                 public void run() {
                     Level level = event.getLevel();
                     String categoryName = event.categoryName.toString();
 
-                    if(level != Level.DEBUG
+                    if (level != Level.DEBUG
                             && level != Level.ERROR
                             && !categoryName.equals("root")
                             ) {
                         String time = Calendar.getInstance().getTime().toString();
-                        logger.setText( time +" " +event.getLevel().toString() + " - " + event.getMessage() + " - " + event.categoryName +"\n" + logger.getText());
+                        logger.setText(time + " " + event.getLevel().toString() + " - " + event.getMessage() + " - " + event.categoryName + "\n" + logger.getText());
                     }
                 }
             });
         }
     }
-
 
 
     public class MyConsoleAppender extends MyAppenderSkeleton {
@@ -185,18 +176,17 @@ public class SnitcoinActivity extends ActionBarActivity {
             String categoryName = event.categoryName.toString();
             StringBuilder builder = new StringBuilder(event.getLevel().toString())
                     .append(" - ").append(categoryName)
-                    .append(" - ").append(event.getMessage())
-                    ;
+                    .append(" - ").append(event.getMessage());
 
-            if(!categoryName.equals("org.bitcoinj.core.BitcoinSerializer")
-                    && !categoryName.equals("org.bitcoinj.core.Peer")
-                    && !categoryName.equals("org.bitcoinj.wallet.DeterministicKeyChain"))
-                //org.bitcoinj.wallet.DeterministicKeyChain
-                System.out.println(builder.toString());
+//            if(!categoryName.equals("org.bitcoinj.core.BitcoinSerializer")
+//                    && !categoryName.equals("org.bitcoinj.core.Peer")
+//                    && !categoryName.equals("org.bitcoinj.wallet.DeterministicKeyChain"))
+            //org.bitcoinj.wallet.DeterministicKeyChain
+            System.out.println(builder.toString());
         }
     }
 
-    private abstract class MyAppenderSkeleton extends AppenderSkeleton{
+    private abstract class MyAppenderSkeleton extends AppenderSkeleton {
 
         @Override
         public synchronized void doAppend(LoggingEvent event) {
@@ -204,12 +194,14 @@ public class SnitcoinActivity extends ActionBarActivity {
         }
 
         @Override
-        public void close() {}
+        public void close() {
+        }
 
         @Override
-        public boolean requiresLayout() { return false; }
+        public boolean requiresLayout() {
+            return false;
+        }
     }
-
 
 
 }
