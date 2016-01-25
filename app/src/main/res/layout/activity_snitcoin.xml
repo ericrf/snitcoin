@@ -72,6 +72,7 @@
                 android:text="0"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,18 +100,24 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/send" />
 
-            <ListView
-                android:id="@+id/list_transactions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
-
 
             <HorizontalScrollView
-                android:id="@+id/horizontalScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="left">
+
+                <ListView
+                    android:id="@+id/list_transactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal">
+
                 <TextView
                     android:id="@+id/logger"
                     android:layout_width="wrap_content"
@@ -118,8 +125,6 @@
                     android:ellipsize="end"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </HorizontalScrollView>
-
-
 
 
         </LinearLayout>

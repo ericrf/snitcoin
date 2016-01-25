@@ -7,4 +7,5 @@
     <string name="balance">Balance</string>
     <string name="send">Send</string>
     <string name="send_bitcoins">Send Bitcoins</string>
+    <string name="title_activity_exchange">ExchangeActivity</string>
 </resources>

@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="snitcoin.sneer.me.snitcoin" >
 
-
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,12 +9,22 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <meta-data android:name="SneerApp" android:value=""/>
+
         <activity
             android:name=".SnitcoinActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".ExchangeActivity"
+            android:label="@string/title_activity_exchange"
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <meta-data
+                android:name="sneer:session-type"
+                android:value="bitcoin-request"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
