@@ -72,7 +72,7 @@ public class ExchangeActivity extends Activity {
         builder.setPositiveButton("Request", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                
+
             }
         });
         setNegativeButton(builder);
