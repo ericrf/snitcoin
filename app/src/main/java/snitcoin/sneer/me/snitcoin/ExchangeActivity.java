@@ -7,27 +7,64 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import sneer.android.Message;
 import sneer.android.PartnerSession;
 
 
 public class ExchangeActivity extends Activity {
 
+    LayoutInflater inflater;
     private AlertDialog requestDialog;
     private AlertDialog requestReceivedDialog;
-
     PartnerSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        inflater = getLayoutInflater();
 
-        LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.layout.bitcoin_request, null);
-        view.findViewById(R.id.button_change_currency).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
+        session = PartnerSession.join(this, new PartnerSession.Listener() {  /////////////Sneer API call
+            @Override
+            public void onUpToDate() {
+                refresh();
+            }
+
+            @Override
+            public void onMessage(Message message) {
+                handle(message);
             }
         });
+    }
 
+    private AlertDialog createRequestReceivedDialog() {
+        View view = inflater.inflate(R.layout.bitcoin_request_received, null);
+        setupButtonChangeCurrency(view);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Bitcoin request received");
+        builder.setView(view);
+        setNegativeButton(builder);
+        return builder.create();
+    }
+
+    private void setNegativeButton(AlertDialog.Builder builder) {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                restart();
+                finish();
+            }
+        });
+    }
+
+    private void restart() {
+        requestDialog = null;
+        requestReceivedDialog = null;
+    }
+
+    private AlertDialog createRequestDialog() {
+        View view = inflater.inflate(R.layout.bitcoin_request, null);
+        setupButtonChangeCurrency(view);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Bitcoin request");
@@ -38,41 +75,24 @@ public class ExchangeActivity extends Activity {
 
             }
         });
+        setNegativeButton(builder);
+        return builder.create();
+    }
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        requestDialog = builder.create();
-        //requestDialog.show();
-
-        view = inflater.inflate(R.layout.bitcoin_request_received, null);
+    private void setupButtonChangeCurrency(View view) {
         view.findViewById(R.id.button_change_currency).setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
             }
         });
-
-
-        builder = new AlertDialog.Builder(this);
-        builder.setTitle("Bitcoin request received");
-        builder.setView(view);
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        requestDialog = builder.create();
-        requestDialog.show();
-
-
     }
 
     private void refresh() {
 
     }
+
+    private void handle(Message message){
+        
+    };
 
 
     @Override
