@@ -47,6 +47,7 @@ public class ExchangeActivity extends Activity {
     }
 
     private void refresh() {
+        if(requestDialog == null && requestReceivedDialog == null) requestDialog = createRequestDialog();
         if (requestDialog != null) requestDialog.show();
         if (requestReceivedDialog != null) requestReceivedDialog.show();
     }
@@ -100,9 +101,6 @@ public class ExchangeActivity extends Activity {
         requestDialog = null;
         requestReceivedDialog = null;
     }
-
-
-
 
     @Override
     protected void onDestroy() {
