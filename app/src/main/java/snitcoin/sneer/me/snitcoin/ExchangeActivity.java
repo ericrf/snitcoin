@@ -3,9 +3,15 @@ package snitcoin.sneer.me.snitcoin;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import sneer.android.Message;
 import sneer.android.PartnerSession;
@@ -21,19 +27,59 @@ public class ExchangeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        inflater = getLayoutInflater();
-        session = PartnerSession.join(this, new PartnerSession.Listener() {
-            @Override
-            public void onUpToDate() {
-                refresh();
-            }
+        setContentView(R.layout.teste_rest);
 
-            @Override
-            public void onMessage(Message message) {
-                handle(message);
-            }
-        });
+
+
+
+//        inflater = getLayoutInflater();
+//        session = PartnerSession.join(this, new PartnerSession.Listener() {
+//            @Override
+//            public void onUpToDate() {
+//                refresh();
+//            }
+//
+//            @Override
+//            public void onMessage(Message message) {
+//                handle(message);
+//            }
+//        });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new BlockChainExchangeRate().execute("BRL", 200);
+    }
+
+    private class BlockChainExchangeRate extends AsyncTask<String, Void, String>{
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                final String url = "https://blockchain.info/tobtc?currency=USD&value=500";
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                String btc = restTemplate.getForObject(url, String.class);
+                return btc;
+            } catch (Exception e) {
+                Log.e("ExchangeActivity", e.getMessage(), e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String btc) {
+            ((TextView) findViewById(R.id.btc)).setText(btc);
+        }
+
+        public void execute(String brl, int i) {
+            super.execute();
+        }
+    }
+
+
 
     private void handle(Message message){
         if(message.wasSentByMe()){
@@ -47,7 +93,7 @@ public class ExchangeActivity extends Activity {
     }
 
     private void refresh() {
-        if(requestDialog == null && requestReceivedDialog == null) requestDialog = createRequestDialog();
+        if (requestDialog == null && requestReceivedDialog == null) requestDialog = createRequestDialog();
         if (requestDialog != null) requestDialog.show();
         if (requestReceivedDialog != null) requestReceivedDialog.show();
     }
@@ -105,6 +151,8 @@ public class ExchangeActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        session.close();
+//        session.close();
     }
+
+
 }
